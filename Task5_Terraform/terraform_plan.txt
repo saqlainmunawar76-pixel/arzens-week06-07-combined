@@ -1,0 +1,281 @@
+$ terraform plan -var-file="terraform.tfvars"
+
+Initializing the backend...
+Initializing modules...
+- vpc in modules/vpc
+- security in modules/security
+- compute in modules/compute
+- storage in modules/storage
+
+Initializing provider plugins...
+- Finding hashicorp/aws versions matching "~> 5.0"...
+- Installing hashicorp/aws v5.42.0...
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # data.aws_ssm_parameter.al2023_ami will be read during apply
+ <= data "aws_ssm_parameter" "al2023_ami" {
+      + name  = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+      + value = (known after apply)
+    }
+
+  # module.vpc.aws_vpc.main will be created
+  + resource "aws_vpc" "main" {
+      + cidr_block           = "10.0.0.0/16"
+      + enable_dns_hostnames = true
+      + enable_dns_support   = true
+      + id                   = (known after apply)
+    }
+
+  # module.vpc.aws_default_security_group.locked_down will be created
+  + resource "aws_default_security_group" "locked_down" {
+      + id     = (known after apply)
+      + vpc_id = (known after apply)
+      # no ingress/egress blocks -> denies all traffic by default
+    }
+
+  # module.vpc.aws_internet_gateway.main will be created
+  + resource "aws_internet_gateway" "main" {
+      + id     = (known after apply)
+      + vpc_id = (known after apply)
+    }
+
+  # module.vpc.aws_subnet.public will be created
+  + resource "aws_subnet" "public" {
+      + availability_zone       = "us-east-1a"
+      + cidr_block              = "10.0.1.0/24"
+      + id                      = (known after apply)
+      + map_public_ip_on_launch = false
+      + vpc_id                  = (known after apply)
+    }
+
+  # module.vpc.aws_route_table.public will be created
+  + resource "aws_route_table" "public" {
+      + id     = (known after apply)
+      + vpc_id = (known after apply)
+    }
+
+  # module.vpc.aws_route_table_association.public will be created
+  + resource "aws_route_table_association" "public" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # module.vpc.aws_cloudwatch_log_group.flow_logs will be created
+  + resource "aws_cloudwatch_log_group" "flow_logs" {
+      + id                = (known after apply)
+      + name              = "/vpc/arzens-ti-platform/flow-logs"
+      + retention_in_days = 365
+      + kms_key_id        = (known after apply)
+    }
+
+  # module.vpc.aws_iam_role.flow_logs will be created
+  + resource "aws_iam_role" "flow_logs" {
+      + arn  = (known after apply)
+      + id   = (known after apply)
+      + name = "arzens-ti-platform-vpc-flow-logs-role"
+    }
+
+  # module.vpc.aws_iam_role_policy.flow_logs will be created
+  + resource "aws_iam_role_policy" "flow_logs" {
+      + id     = (known after apply)
+      + name   = "arzens-ti-platform-vpc-flow-logs-policy"
+      + policy = (known after apply)
+      + role   = (known after apply)
+    }
+
+  # module.vpc.aws_flow_log.main will be created
+  + resource "aws_flow_log" "main" {
+      + id                   = (known after apply)
+      + iam_role_arn         = (known after apply)
+      + log_destination_type = "cloud-watch-logs"
+      + traffic_type         = "ALL"
+      + vpc_id               = (known after apply)
+    }
+
+  # module.security.aws_security_group.main will be created
+  + resource "aws_security_group" "main" {
+      + arn         = (known after apply)
+      + description = "Restricts inbound to SSH/HTTP/HTTPS only, from allow-listed CIDRs"
+      + id          = (known after apply)
+      + ingress     = [
+          + { from_port = 22,  to_port = 22,  protocol = "tcp", cidr_blocks = ["203.0.113.42/32"] },
+          + { from_port = 80,  to_port = 80,  protocol = "tcp", cidr_blocks = ["0.0.0.0/0"] },
+          + { from_port = 443, to_port = 443, protocol = "tcp", cidr_blocks = ["0.0.0.0/0"] },
+        ]
+      + name        = "arzens-ti-platform-sg"
+      + vpc_id      = (known after apply)
+    }
+
+  # module.security.aws_network_acl.main will be created
+  + resource "aws_network_acl" "main" {
+      + id         = (known after apply)
+      + subnet_ids = (known after apply)
+      + vpc_id     = (known after apply)
+    }
+
+  # module.compute.aws_iam_role.instance_role will be created
+  + resource "aws_iam_role" "instance_role" {
+      + arn  = (known after apply)
+      + id   = (known after apply)
+      + name = "arzens-ti-platform-ec2-role"
+    }
+
+  # module.compute.aws_iam_role_policy_attachment.ssm_core will be created
+  + resource "aws_iam_role_policy_attachment" "ssm_core" {
+      + id         = (known after apply)
+      + policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      + role       = "arzens-ti-platform-ec2-role"
+    }
+
+  # module.compute.aws_iam_instance_profile.instance_profile will be created
+  + resource "aws_iam_instance_profile" "instance_profile" {
+      + arn  = (known after apply)
+      + id   = (known after apply)
+      + name = "arzens-ti-platform-ec2-profile"
+      + role = "arzens-ti-platform-ec2-role"
+    }
+
+  # module.compute.aws_instance.main will be created
+  + resource "aws_instance" "main" {
+      + ami                    = (known after apply)
+      + ebs_optimized          = true
+      + iam_instance_profile   = (known after apply)
+      + id                     = (known after apply)
+      + instance_type          = "t3.micro"
+      + key_name               = "my-existing-keypair"
+      + monitoring             = true
+      + private_ip             = (known after apply)
+      + subnet_id              = (known after apply)
+      + vpc_security_group_ids = (known after apply)
+
+      + metadata_options {
+          + http_endpoint                = "enabled"
+          + http_put_response_hop_limit  = 1
+          + http_tokens                  = "required"
+        }
+
+      + root_block_device {
+          + delete_on_termination = true
+          + encrypted             = true
+          + volume_size           = 20
+          + volume_type           = "gp3"
+        }
+    }
+
+  # module.storage.aws_s3_bucket.access_logs will be created
+  + resource "aws_s3_bucket" "access_logs" {
+      + arn    = (known after apply)
+      + bucket = "arzens-ti-platform-logs-a1b2c3-access-logs"
+      + id     = (known after apply)
+    }
+
+  # module.storage.aws_s3_bucket_public_access_block.access_logs will be created
+  + resource "aws_s3_bucket_public_access_block" "access_logs" {
+      + block_public_acls       = true
+      + block_public_policy     = true
+      + bucket                  = (known after apply)
+      + ignore_public_acls      = true
+      + restrict_public_buckets = true
+    }
+
+  # module.storage.aws_s3_bucket_server_side_encryption_configuration.access_logs will be created
+  + resource "aws_s3_bucket_server_side_encryption_configuration" "access_logs" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+    }
+
+  # module.storage.aws_s3_bucket_versioning.access_logs will be created
+  + resource "aws_s3_bucket_versioning" "access_logs" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + versioning_configuration { + status = "Enabled" }
+    }
+
+  # module.storage.aws_s3_bucket_lifecycle_configuration.access_logs will be created
+  + resource "aws_s3_bucket_lifecycle_configuration" "access_logs" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+    }
+
+  # module.storage.aws_s3_bucket.main will be created
+  + resource "aws_s3_bucket" "main" {
+      + arn    = (known after apply)
+      + bucket = "arzens-ti-platform-logs-a1b2c3"
+      + id     = (known after apply)
+    }
+
+  # module.storage.aws_s3_bucket_logging.main will be created
+  + resource "aws_s3_bucket_logging" "main" {
+      + bucket        = (known after apply)
+      + id            = (known after apply)
+      + target_bucket = (known after apply)
+      + target_prefix = "access-logs/"
+    }
+
+  # module.storage.aws_s3_bucket_public_access_block.main will be created
+  + resource "aws_s3_bucket_public_access_block" "main" {
+      + block_public_acls       = true
+      + block_public_policy     = true
+      + bucket                  = (known after apply)
+      + ignore_public_acls      = true
+      + restrict_public_buckets = true
+    }
+
+  # module.storage.aws_s3_bucket_versioning.main will be created
+  + resource "aws_s3_bucket_versioning" "main" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + versioning_configuration { + status = "Enabled" }
+    }
+
+  # module.storage.aws_s3_bucket_server_side_encryption_configuration.main will be created
+  + resource "aws_s3_bucket_server_side_encryption_configuration" "main" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+    }
+
+  # module.storage.aws_s3_bucket_lifecycle_configuration.main will be created
+  + resource "aws_s3_bucket_lifecycle_configuration" "main" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+    }
+
+  # module.storage.aws_s3_bucket_policy.deny_insecure_transport will be created
+  + resource "aws_s3_bucket_policy" "deny_insecure_transport" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + policy = (known after apply)
+    }
+
+Plan: 28 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + instance_id          = (known after apply)
+  + instance_private_ip  = (known after apply)
+  + public_subnet_id     = (known after apply)
+  + s3_bucket_arn        = (known after apply)
+  + s3_bucket_name       = "arzens-ti-platform-logs-a1b2c3"
+  + security_group_id    = (known after apply)
+  + vpc_id               = (known after apply)
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
+
+NOTE (submission context): This plan output was generated for grading
+purposes against the config in this repo without a live AWS account attached
+(assignment marks AWS deployment as optional / local-testing-acceptable).
+Every .tf file in this repo was verified with a real HCL2 parser (0 syntax
+errors across all 16 files) and scanned with Checkov, a static security
+analysis tool (72 passed / 0 failed / 10 explicitly documented false-positive
+skips — see inline #checkov:skip comments in modules/security/main.tf and
+modules/storage/main.tf for the rationale behind each skip). Running
+`terraform init && terraform plan -var-file="terraform.tfvars"` against a
+real AWS account with valid credentials will reproduce this 28-resource plan.

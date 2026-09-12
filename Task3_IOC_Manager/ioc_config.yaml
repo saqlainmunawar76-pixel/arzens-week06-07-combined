@@ -1,0 +1,52 @@
+# =============================================================================
+# IOC Manager — Configuration
+# =============================================================================
+
+database:
+  path: "ioc_database.json"
+
+# How long an IOC stays "active" before --expire-check removes it, based on
+# its current verdict. Higher-severity IOCs are kept longer since they're
+# more valuable for retrospective hunting; low-risk/clean entries age out fast
+# to keep the blocklist lean and avoid false-positive drift.
+expiration_days:
+  MALICIOUS: 90
+  SUSPICIOUS: 45
+  LOW_RISK: 14
+  CLEAN: 3
+
+# Confidence scoring weights (rule-based, must sum to 1.0)
+confidence:
+  weights:
+    source_diversity: 0.4   # how many of the 3 TI sources returned a positive hit
+    score_stability: 0.35   # low variance across historical re-enrichments = more confident
+    recency: 0.25           # more recently re-confirmed = more confident
+  recency_half_life_days: 14   # recency score halves every N days since last_seen
+
+# Automatic re-enrichment cadence for --update-all (informational — see
+# README for cron/Task Scheduler wiring, since the script itself is triggered
+# externally rather than daemonizing).
+automation:
+  update_all_cron: "0 3 * * *"        # daily at 03:00
+  expire_check_cron: "30 3 * * *"     # daily at 03:30, after update
+  health_check_cron: "0 * * * *"      # hourly
+
+# Blocklist export — which verdicts are considered "block-worthy"
+blocklist:
+  include_verdicts: ["MALICIOUS", "SUSPICIOUS"]
+  format: "plain"   # plain | csv | firewall (iptables-style)
+
+# Alerting — stub webhook/email config. Disabled by default so the sample
+# run doesn't attempt any real network calls.
+alerting:
+  enabled: false
+  webhook_url: "https://hooks.example.com/YOUR_WEBHOOK_HERE"
+  alert_on_verdicts: ["MALICIOUS"]
+  email:
+    enabled: false
+    smtp_host: "smtp.example.com"
+    smtp_port: 587
+    to: "soc-team@example.com"
+
+reporting:
+  output_path: "weekly_report.html"

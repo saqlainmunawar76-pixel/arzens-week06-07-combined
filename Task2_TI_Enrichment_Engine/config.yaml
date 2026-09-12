@@ -1,0 +1,51 @@
+# =============================================================================
+# TI Enricher - Configuration Template
+# =============================================================================
+# Copy this file to config.local.yaml and fill in your real API keys.
+# NEVER commit config.local.yaml with real keys to a public git repo.
+# =============================================================================
+
+api_keys:
+  virustotal: "YOUR_VIRUSTOTAL_API_KEY_HERE"      # https://www.virustotal.com/gui/my-apikey
+  abuseipdb: "YOUR_ABUSEIPDB_API_KEY_HERE"         # https://www.abuseipdb.com/account/api
+  otx: "YOUR_ALIENVAULT_OTX_API_KEY_HERE"          # https://otx.alienvault.com/api
+
+# Rate limits (requests per window) per free-tier docs.
+# The enricher self-throttles to stay under these.
+rate_limits:
+  virustotal:
+    requests: 4
+    window_seconds: 60
+  abuseipdb:
+    requests: 1000
+    window_seconds: 86400
+  otx:
+    requests: 10000
+    window_seconds: 86400   # effectively unlimited on free tier, kept conservative
+
+# How long a cached result is considered fresh (avoids re-querying the same
+# indicator across runs and burning rate-limit budget).
+cache:
+  path: "cache.json"
+  ttl_hours: 24
+
+# HTTP behavior
+network:
+  timeout_seconds: 10
+  max_retries: 2
+  backoff_seconds: 3
+
+# Risk scoring weights (must sum to 1.0). Used to combine the three sources
+# into a single 0-100 risk score.
+scoring:
+  weights:
+    virustotal: 0.5
+    abuseipdb: 0.3
+    otx: 0.2
+  # If a source fails/times out, its weight is redistributed proportionally
+  # across the remaining successful sources rather than zeroing the score.
+  redistribute_on_failure: true
+
+output:
+  default_format: "console"   # console | json | csv
+  results_file: "enrichment_results.csv"

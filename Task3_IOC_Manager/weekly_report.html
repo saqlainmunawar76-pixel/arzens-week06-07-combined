@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>IOC Weekly Report — 2026-09-11</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; background:#0f1420; color:#e6e9ef; margin:0; padding:32px; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .subtitle { color:#8b93a7; margin-bottom:24px; font-size:13px; }
+  .cards { display:flex; gap:16px; margin-bottom:32px; }
+  .card { background:#161d2e; border:1px solid #262f45; border-radius:10px; padding:16px 24px; text-align:center; flex:1; }
+  .num { font-size:28px; font-weight:700; }
+  .label { font-size:12px; color:#8b93a7; letter-spacing:0.5px; margin-top:4px; }
+  table { width:100%; border-collapse:collapse; margin-bottom:32px; font-size:13px; }
+  th, td { text-align:left; padding:8px 12px; border-bottom:1px solid #262f45; }
+  th { color:#8b93a7; font-weight:600; text-transform:uppercase; font-size:11px; }
+  .v-malicious { color:#ff5c7a; font-weight:600; }
+  .v-suspicious { color:#ffb454; font-weight:600; }
+  .v-low_risk { color:#7ee787; }
+  .v-clean { color:#6b7280; }
+  .empty { color:#4b5262; font-style:italic; }
+  section h2 { font-size:15px; border-left:3px solid #4f7cff; padding-left:10px; }
+</style>
+</head>
+<body>
+  <h1>IOC Weekly Report</h1>
+  <div class="subtitle">Generated 2026-09-11T10:43:15.634891+00:00 · 5 active IOCs tracked</div>
+
+  <div class="cards"><div class='card'><div class='num'>1</div><div class='label'>MALICIOUS</div></div><div class='card'><div class='num'>1</div><div class='label'>SUSPICIOUS</div></div><div class='card'><div class='num'>0</div><div class='label'>LOW_RISK</div></div><div class='card'><div class='num'>3</div><div class='label'>CLEAN</div></div></div>
+
+  <section>
+    <h2>Top 10 by Risk Score</h2>
+    <table>
+      <tr><th>Indicator</th><th>Type</th><th>Verdict</th><th>Risk Score</th><th>Confidence</th></tr>
+      <tr><td>185.220.101.45</td><td>ip</td><td class='v-malicious'>MALICIOUS</td><td>87.4</td><td>82.5</td></tr>
+<tr><td>malware-traffic-analysis.net</td><td>domain</td><td class='v-suspicious'>SUSPICIOUS</td><td>62.5</td><td>69.2</td></tr>
+<tr><td>8.8.8.8</td><td>ip</td><td class='v-clean'>CLEAN</td><td>0.0</td><td>82.5</td></tr>
+<tr><td>1.1.1.1</td><td>ip</td><td class='v-clean'>CLEAN</td><td>0.0</td><td>82.5</td></tr>
+<tr><td>d41d8cd98f00b204e9800998ecf8427e</td><td>hash</td><td class='v-clean'>CLEAN</td><td>0.0</td><td>69.2</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Malicious IOCs (full list)</h2>
+    <table>
+      <tr><th>Indicator</th><th>Type</th><th>Verdict</th><th>Risk Score</th><th>Confidence</th></tr>
+      <tr><td>185.220.101.45</td><td>ip</td><td class='v-malicious'>MALICIOUS</td><td>87.4</td><td>82.5</td></tr>
+    </table>
+  </section>
+</body>
+</html>

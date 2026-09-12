@@ -1,0 +1,21 @@
+---
+# =============================================================================
+# security.yml — Security-specific playbook
+# Runs only the security role, for fast re-hardening / drift-remediation
+# passes without touching package updates or compliance reporting.
+# Run: ansible-playbook security.yml
+# Scheduled use: pair with a nightly cron/CI job for drift correction.
+# =============================================================================
+
+- name: Apply security hardening only
+  hosts: all_servers
+  become: true
+  gather_facts: true
+
+  vars:
+    fail2ban_bantime: 3600
+    fail2ban_findtime: 600
+    fail2ban_maxretry: 4
+
+  roles:
+    - security

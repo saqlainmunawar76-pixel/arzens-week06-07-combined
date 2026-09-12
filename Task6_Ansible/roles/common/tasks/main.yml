@@ -1,0 +1,67 @@
+---
+# =============================================================================
+# Role: common
+# System updates (unattended-upgrades), timezone, and base logging.
+# =============================================================================
+
+- name: Update apt package cache
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+  when: ansible_os_family == "Debian"
+
+- name: Upgrade all packages to latest (safe upgrade)
+  apt:
+    upgrade: safe
+  when: ansible_os_family == "Debian"
+
+- name: Install unattended-upgrades package
+  apt:
+    name: unattended-upgrades
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Enable unattended-upgrades (automatic security patching)
+  copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+      APT::Periodic::AutocleanInterval "7";
+    owner: root
+    group: root
+    mode: "0644"
+  when: ansible_os_family == "Debian"
+
+- name: Set system timezone
+  timezone:
+    name: "{{ system_timezone | default('UTC') }}"
+
+- name: Ensure rsyslog is installed and running (base logging)
+  apt:
+    name: rsyslog
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Ensure rsyslog service is enabled and started
+  service:
+    name: rsyslog
+    state: started
+    enabled: true
+
+- name: Ensure NTP (chrony) is installed for accurate log timestamps
+  apt:
+    name: chrony
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Ensure chrony service is enabled and started
+  service:
+    name: chrony
+    state: started
+    enabled: true
+
+- name: Remove unused packages (idempotent cleanup)
+  apt:
+    autoremove: true
+  when: ansible_os_family == "Debian"

@@ -1,0 +1,35 @@
+---
+# =============================================================================
+# site.yml — Main playbook
+# Applies common -> security -> compliance to every managed host.
+# Run: ansible-playbook site.yml
+# Dry run: ansible-playbook site.yml --check --diff
+# =============================================================================
+
+- name: Harden and validate all managed servers
+  hosts: all_servers
+  become: true
+  gather_facts: true
+
+  vars:
+    system_timezone: "UTC"
+    fail2ban_bantime: 3600
+    fail2ban_findtime: 600
+    fail2ban_maxretry: 4
+
+  pre_tasks:
+    - name: Ping check before making any changes
+      ping:
+
+  roles:
+    - common
+    - security
+    - compliance
+
+  post_tasks:
+    - name: Print per-host compliance summary to console
+      debug:
+        msg: >-
+          Compliance run complete for {{ inventory_hostname }}.
+          See reports/compliance_report_{{ inventory_hostname }}.txt on the
+          control node for the full breakdown.

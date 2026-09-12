@@ -1,0 +1,26 @@
+#jinja2: trim_blocks:"true", lstrip_blocks:"true"
+# Managed by Ansible — role: security. Do not edit directly.
+
+[DEFAULT]
+bantime  = {{ fail2ban_bantime | default(3600) }}
+findtime = {{ fail2ban_findtime | default(600) }}
+maxretry = {{ fail2ban_maxretry | default(4) }}
+backend  = systemd
+
+[sshd]
+enabled  = true
+port     = ssh
+filter   = sshd
+logpath  = %(sshd_log)s
+maxretry = 3
+bantime  = 7200
+
+{% if 'webservers' in group_names %}
+# Custom jail: repeated 4xx/5xx probing on the web tier (basic scanner defense).
+[nginx-http-auth]
+enabled  = true
+port     = http,https
+filter   = nginx-http-auth
+logpath  = /var/log/nginx/error.log
+maxretry = 5
+{% endif %}

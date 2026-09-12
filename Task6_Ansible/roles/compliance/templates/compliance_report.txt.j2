@@ -1,0 +1,26 @@
+================================================================================
+CIS COMPLIANCE REPORT — {{ inventory_hostname }}
+Generated: {{ ansible_date_time.iso8601 }}
+================================================================================
+
+Host facts:
+  OS Family     : {{ ansible_os_family }}
+  Distribution  : {{ ansible_distribution }} {{ ansible_distribution_version }}
+  Kernel        : {{ ansible_kernel }}
+
+--------------------------------------------------------------------------------
+CHECK RESULTS
+--------------------------------------------------------------------------------
+{% for check in compliance_checks %}
+[{{ 'PASS' if (check.passed | bool) else 'FAIL' }}] {{ check.name }}  (CIS {{ check.cis_ref }})
+{% endfor %}
+
+--------------------------------------------------------------------------------
+SUMMARY
+--------------------------------------------------------------------------------
+{% set passed_count = compliance_checks | selectattr('passed') | list | length %}
+{% set total_count = compliance_checks | length %}
+Passed: {{ passed_count }} / {{ total_count }}
+Status: {{ 'COMPLIANT' if passed_count == total_count else 'NON-COMPLIANT — review FAIL items above' }}
+
+================================================================================

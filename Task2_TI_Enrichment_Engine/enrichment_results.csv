@@ -1,0 +1,6 @@
+indicator,type,risk_score,verdict,vt_score,abuseipdb_score,otx_score,timestamp
+8.8.8.8,ip,0.0,CLEAN,0.0,0,0.0,2026-09-11T14:02:11+00:00
+1.1.1.1,ip,0.0,CLEAN,0.0,0,0.0,2026-09-11T14:02:13+00:00
+185.220.101.45,ip,87.4,MALICIOUS,91.2,98,40.0,2026-09-11T14:02:16+00:00
+malware-traffic-analysis.net,domain,62.5,SUSPICIOUS,71.0,,30.0,2026-09-11T14:02:19+00:00
+d41d8cd98f00b204e9800998ecf8427e,hash,0.0,CLEAN,0.0,,0.0,2026-09-11T14:02:21+00:00

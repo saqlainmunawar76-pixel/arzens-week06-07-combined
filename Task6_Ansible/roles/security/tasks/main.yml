@@ -1,0 +1,138 @@
+---
+# =============================================================================
+# Role: security
+# SSH hardening, firewall (ufw), fail2ban, and audit logging (auditd).
+# All tasks are idempotent — safe to run repeatedly (Ansible check mode
+# compatible; see ANSIBLE_README.md for --check usage).
+# =============================================================================
+
+# --- SSH hardening -----------------------------------------------------------
+
+- name: Disable root SSH login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PermitRootLogin'
+    line: 'PermitRootLogin no'
+    validate: 'sshd -t -f %s'
+  notify: restart sshd
+
+- name: Enforce key-only authentication (disable password auth)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+    validate: 'sshd -t -f %s'
+  notify: restart sshd
+
+- name: Disable empty passwords
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PermitEmptyPasswords'
+    line: 'PermitEmptyPasswords no'
+    validate: 'sshd -t -f %s'
+  notify: restart sshd
+
+- name: Limit max authentication attempts
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?MaxAuthTries'
+    line: 'MaxAuthTries 3'
+    validate: 'sshd -t -f %s'
+  notify: restart sshd
+
+- name: Set SSH client-alive interval (idle session timeout)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?ClientAliveInterval'
+    line: 'ClientAliveInterval 300'
+    validate: 'sshd -t -f %s'
+  notify: restart sshd
+
+# --- Firewall (ufw) ------------------------------------------------------------
+
+- name: Install ufw
+  apt:
+    name: ufw
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Set ufw default policy - deny all incoming
+  ufw:
+    direction: incoming
+    policy: deny
+
+- name: Set ufw default policy - allow all outgoing
+  ufw:
+    direction: outgoing
+    policy: allow
+
+- name: Allow SSH (rate-limited to blunt brute force)
+  ufw:
+    rule: limit
+    port: "22"
+    proto: tcp
+
+- name: Allow HTTP
+  ufw:
+    rule: allow
+    port: "80"
+    proto: tcp
+  when: "'webservers' in group_names"
+
+- name: Allow HTTPS
+  ufw:
+    rule: allow
+    port: "443"
+    proto: tcp
+  when: "'webservers' in group_names"
+
+- name: Enable ufw
+  ufw:
+    state: enabled
+    logging: 'on'
+
+# --- fail2ban -----------------------------------------------------------------
+
+- name: Install fail2ban
+  apt:
+    name: fail2ban
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Deploy fail2ban jail.local (sshd + custom jail)
+  template:
+    src: jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart fail2ban
+
+- name: Ensure fail2ban is enabled and started
+  service:
+    name: fail2ban
+    state: started
+    enabled: true
+
+# --- auditd ---------------------------------------------------------------------
+
+- name: Install auditd
+  apt:
+    name: auditd
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Deploy CIS-aligned audit rules
+  template:
+    src: audit.rules.j2
+    dest: /etc/audit/rules.d/99-cis-hardening.rules
+    owner: root
+    group: root
+    mode: "0640"
+  notify: restart auditd
+
+- name: Ensure auditd is enabled and started
+  service:
+    name: auditd
+    state: started
+    enabled: true

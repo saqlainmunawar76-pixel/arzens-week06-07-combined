@@ -1,0 +1,43 @@
+# Managed by Ansible — role: security. Do not edit directly.
+# CIS Distribution Independent Linux Benchmark — Section 4.1 (Auditing) mapping
+# noted inline so compliance role can cross-reference these against its checks.
+
+# CIS 4.1.3 — Ensure events that modify date/time information are collected
+-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -k time-change
+-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -k time-change
+-w /etc/localtime -p wa -k time-change
+
+# CIS 4.1.4 — Ensure events that modify user/group information are collected
+-w /etc/group -p wa -k identity
+-w /etc/passwd -p wa -k identity
+-w /etc/gshadow -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/sudoers -p wa -k identity
+-w /etc/sudoers.d/ -p wa -k identity
+
+# CIS 4.1.5 — Ensure events that modify the system's network environment are collected
+-a always,exit -F arch=b64 -S sethostname,setdomainname -k system-locale
+-w /etc/hosts -p wa -k system-locale
+-w /etc/network/ -p wa -k system-locale
+
+# CIS 4.1.7 — Ensure login and logout events are collected
+-w /var/log/faillog -p wa -k logins
+-w /var/log/lastlog -p wa -k logins
+
+# CIS 4.1.10 — Ensure discretionary access control permission modification events are collected
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod
+
+# CIS 4.1.13 — Ensure successful file system mounts are collected
+-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts
+
+# CIS 4.1.15 — Ensure file deletion events by users are collected
+-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F auid>=1000 -F auid!=4294967295 -k delete
+
+# CIS 4.1.17 — Ensure kernel module loading/unloading is collected
+-w /sbin/insmod -p x -k modules
+-w /sbin/rmmod -p x -k modules
+-w /sbin/modprobe -p x -k modules
+
+# Make the audit configuration immutable until next reboot (CIS 4.1.19)
+-e 2

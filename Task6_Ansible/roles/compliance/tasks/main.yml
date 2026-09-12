@@ -1,0 +1,81 @@
+---
+# =============================================================================
+# Role: compliance
+# Runs a set of CIS-aligned checks against the hardened state applied by the
+# security role, then renders a pass/fail report per host.
+# =============================================================================
+
+- name: Check PermitRootLogin is disabled
+  command: sshd -T
+  register: sshd_config_dump
+  changed_when: false
+
+- name: Check ufw is active
+  command: ufw status
+  register: ufw_status
+  changed_when: false
+  failed_when: false
+
+- name: Check fail2ban service is running
+  command: systemctl is-active fail2ban
+  register: fail2ban_status
+  changed_when: false
+  failed_when: false
+
+- name: Check auditd service is running
+  command: systemctl is-active auditd
+  register: auditd_status
+  changed_when: false
+  failed_when: false
+
+- name: Check auditd rules are loaded
+  command: auditctl -l
+  register: auditd_rules
+  changed_when: false
+  failed_when: false
+
+- name: Check unattended-upgrades is installed
+  command: dpkg -s unattended-upgrades
+  register: unattended_upgrades_check
+  changed_when: false
+  failed_when: false
+
+- name: Build compliance facts for this host
+  set_fact:
+    compliance_checks:
+      - name: "SSH root login disabled"
+        cis_ref: "5.2.10"
+        passed: "{{ 'permitrootlogin no' in sshd_config_dump.stdout | lower }}"
+      - name: "Firewall (ufw) active"
+        cis_ref: "3.5.1"
+        passed: "{{ 'Status: active' in ufw_status.stdout }}"
+      - name: "fail2ban running"
+        cis_ref: "N/A (defense-in-depth, beyond CIS baseline)"
+        passed: "{{ fail2ban_status.stdout == 'active' }}"
+      - name: "auditd running"
+        cis_ref: "4.1.1.2"
+        passed: "{{ auditd_status.stdout == 'active' }}"
+      - name: "auditd rules loaded"
+        cis_ref: "4.1.3 - 4.1.19"
+        passed: "{{ auditd_rules.rc == 0 and auditd_rules.stdout != '' }}"
+      - name: "Automatic security updates enabled"
+        cis_ref: "1.2.2"
+        passed: "{{ unattended_upgrades_check.rc == 0 }}"
+
+- name: Append this host's results to the in-memory report list
+  set_fact:
+    all_compliance_results: "{{ (all_compliance_results | default([])) + [{'host': inventory_hostname, 'checks': compliance_checks}] }}"
+  delegate_to: localhost
+  delegate_facts: true
+
+- name: Render per-host plain-text compliance report
+  template:
+    src: compliance_report.txt.j2
+    dest: "/tmp/compliance_report_{{ inventory_hostname }}.txt"
+    mode: "0644"
+
+- name: Fetch the per-host report back to the control node
+  fetch:
+    src: "/tmp/compliance_report_{{ inventory_hostname }}.txt"
+    dest: "reports/"
+    flat: true

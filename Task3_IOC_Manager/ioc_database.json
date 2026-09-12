@@ -1,0 +1,72 @@
+{
+  "8.8.8.8": {
+    "indicator": "8.8.8.8",
+    "type": "ip",
+    "verdict": "CLEAN",
+    "risk_score": 0.0,
+    "confidence": 82.5,
+    "first_seen": "2026-09-11T10:43:15.489543+00:00",
+    "last_seen": "2026-09-11T10:43:15.489543+00:00",
+    "expires_at": "2026-09-14T10:43:15.489543+00:00",
+    "source_count": 3,
+    "history": [],
+    "tags": [],
+    "alerted": false
+  },
+  "1.1.1.1": {
+    "indicator": "1.1.1.1",
+    "type": "ip",
+    "verdict": "CLEAN",
+    "risk_score": 0.0,
+    "confidence": 82.5,
+    "first_seen": "2026-09-11T10:43:15.489584+00:00",
+    "last_seen": "2026-09-11T10:43:15.489584+00:00",
+    "expires_at": "2026-09-14T10:43:15.489584+00:00",
+    "source_count": 3,
+    "history": [],
+    "tags": [],
+    "alerted": false
+  },
+  "185.220.101.45": {
+    "indicator": "185.220.101.45",
+    "type": "ip",
+    "verdict": "MALICIOUS",
+    "risk_score": 87.4,
+    "confidence": 82.5,
+    "first_seen": "2026-09-11T10:43:15.489599+00:00",
+    "last_seen": "2026-09-11T10:43:15.489599+00:00",
+    "expires_at": "2026-12-10T10:43:15.489599+00:00",
+    "source_count": 3,
+    "history": [],
+    "tags": [],
+    "alerted": false
+  },
+  "malware-traffic-analysis.net": {
+    "indicator": "malware-traffic-analysis.net",
+    "type": "domain",
+    "verdict": "SUSPICIOUS",
+    "risk_score": 62.5,
+    "confidence": 69.2,
+    "first_seen": "2026-09-11T10:43:15.489609+00:00",
+    "last_seen": "2026-09-11T10:43:15.489609+00:00",
+    "expires_at": "2026-10-26T10:43:15.489609+00:00",
+    "source_count": 2,
+    "history": [],
+    "tags": [],
+    "alerted": false
+  },
+  "d41d8cd98f00b204e9800998ecf8427e": {
+    "indicator": "d41d8cd98f00b204e9800998ecf8427e",
+    "type": "hash",
+    "verdict": "CLEAN",
+    "risk_score": 0.0,
+    "confidence": 69.2,
+    "first_seen": "2026-09-11T10:43:15.489616+00:00",
+    "last_seen": "2026-09-11T10:43:15.489616+00:00",
+    "expires_at": "2026-09-14T10:43:15.489616+00:00",
+    "source_count": 2,
+    "history": [],
+    "tags": [],
+    "alerted": false
+  }
+}

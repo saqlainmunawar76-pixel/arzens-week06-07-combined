@@ -1,0 +1,5 @@
+# SIEM Blocklist — generated 2026-09-11T10:43:15.563216+00:00
+# 2 indicators (verdicts: MALICIOUS, SUSPICIOUS)
+#
+185.220.101.45  # type=ip risk=87.4 confidence=82.5 verdict=MALICIOUS
+malware-traffic-analysis.net  # type=domain risk=62.5 confidence=69.2 verdict=SUSPICIOUS

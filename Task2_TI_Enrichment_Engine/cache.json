@@ -1,0 +1,46 @@
+{
+  "virustotal:185.220.101.45": {
+    "cached_at": "2026-09-11T14:02:16+00:00",
+    "result": {
+      "source": "virustotal",
+      "success": true,
+      "score": 91.2,
+      "details": {
+        "stats": {
+          "malicious": 55,
+          "suspicious": 5,
+          "undetected": 6,
+          "harmless": 4,
+          "timeout": 0
+        }
+      },
+      "error": null
+    }
+  },
+  "abuseipdb:185.220.101.45": {
+    "cached_at": "2026-09-11T14:02:16+00:00",
+    "result": {
+      "source": "abuseipdb",
+      "success": true,
+      "score": 98.0,
+      "details": {
+        "totalReports": 412,
+        "countryCode": "DE",
+        "isWhitelisted": false
+      },
+      "error": null
+    }
+  },
+  "otx:185.220.101.45": {
+    "cached_at": "2026-09-11T14:02:16+00:00",
+    "result": {
+      "source": "otx",
+      "success": true,
+      "score": 40.0,
+      "details": {
+        "pulse_count": 4
+      },
+      "error": null
+    }
+  }
+}
