@@ -1,8 +1,10 @@
 # THE ARZENS — Advanced Track — Week 06-07 Combined Assignment
 
+**GitHub Repository:** https://github.com/saqlainmunawar76-pixel/arzens-week06-07-
+
 Threat Intelligence Automation + Infrastructure as Code Security
 
-**Submitted by:** Saqlain | **Track:** AI, Automation & Security Engineering (Advanced)
+**Submitted by:** Saqlain Munawar k:** AI, Automation & Security Engineering (Advanced)
 
 ## Contents
 
