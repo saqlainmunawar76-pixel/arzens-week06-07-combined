@@ -1,10 +1,10 @@
 # THE ARZENS — Advanced Track — Week 06-07 Combined Assignment
 
-**GitHub Repository:** https://github.com/saqlainmunawar76-pixel/arzens-week06-07-
-
 Threat Intelligence Automation + Infrastructure as Code Security
 
-**Submitted by:** Saqlain Munawar k:** AI, Automation & Security Engineering (Advanced)
+**GitHub Repository:** https://github.com/saqlainmunawar76-pixel/arzens-week06-07-combined
+
+**Submitted by:** Saqlain Munawar | **Track:** AI, Automation & Security Engineering (Advanced)
 
 ## Contents
 
@@ -18,8 +18,7 @@ Threat Intelligence Automation + Infrastructure as Code Security
 | Task 6 — Ansible Hardening & Compliance | 5 | `Task6_Ansible/` |
 | AI Assistance Note | — | `AI_ASSISTANCE_NOTE.md` |
 
-Each task folder has its own `README.md` with setup instructions and a note on how that specific
-deliverable was tested/verified.
+Each task folder has its own `README.md` with setup instructions and a note on how that specific deliverable was tested/verified.
 
 ## Quick start per task
 
@@ -44,25 +43,9 @@ ansible-playbook site.yml --check --diff
 
 ## Note on live deployment (Tasks 5 & 6)
 
-Per the assignment's own instructions ("AWS Free Tier — optional, can use local"), this submission
-does not deploy to a live AWS account. Instead, every deliverable was verified as thoroughly as
-possible without one:
+Per the assignment's own instructions ("AWS Free Tier — optional, can use local"), this submission does not deploy to a live AWS account. Instead, every deliverable was verified as thoroughly as possible without one:
 
-- **Task 5**: every `.tf` file parses cleanly with a real HCL2 parser, and the whole
-  configuration passes a Checkov static security scan (72 passed / 0 failed / 10
-  documented false-positive skips — see inline `#checkov:skip` comments);
-  `terraform_plan.txt` shows the expected plan output for the 28 resources this
-  configuration defines.
-- **Task 6**: both playbooks pass `ansible-playbook --syntax-check`; a `--check --diff`
-  dry run of `site.yml` against localhost executed the `common` role's tasks correctly;
-  all three Jinja2 templates (fail2ban jail, auditd rules, compliance report) were
-  rendered through real Ansible runs — the included `compliance_report.txt` is genuine
-  template output. (`security.yml`'s dry run hits a missing-`sshd`-package gap specific
-  to this authoring container — documented in `Task6_Ansible/ANSIBLE_README.md`.)
+- **Task 5**: every `.tf` file parses cleanly with a real HCL2 parser, and the whole configuration passes a Checkov static security scan (72 passed / 0 failed / 10 documented false-positive skips — see inline `#checkov:skip` comments); `terraform_plan.txt` shows the expected plan output for the 28 resources this configuration defines.
+- **Task 6**: both playbooks pass `ansible-playbook --syntax-check`; a `--check --diff` dry run of `site.yml` against localhost executed the `common` role's tasks correctly; all three Jinja2 templates (fail2ban jail, auditd rules, compliance report) were rendered through real Ansible runs — the included `compliance_report.txt` is genuine template output. (`security.yml`'s dry run hits a missing-`sshd`-package gap specific to the authoring container — documented in `Task6_Ansible/ANSIBLE_README.md`.)
 
-Extra hardening/automation features (multi-environment tfvars, VPC flow logs, NACL defense-in-depth,
-IMDSv2 enforcement, least-privilege EC2 IAM role, locked-down default VPC security group, TLS-only
-+ access-logged S3 bucket, fail2ban custom jails, CIS-mapped auditd rules, a `validate.sh` CI gate,
-alerting/health-check bonus commands in the IOC manager) were added throughout to go beyond the
-baseline requirements, and the Terraform config was iterated against a real Checkov security scan
-until it reached a clean pass.
+Extra hardening/automation features (multi-environment tfvars, VPC flow logs, NACL defense-in-depth, IMDSv2 enforcement, least-privilege EC2 IAM role, locked-down default VPC security group, TLS-only + access-logged S3 bucket, fail2ban custom jails, CIS-mapped auditd rules, a `validate.sh` CI gate, alerting/health-check bonus commands in the IOC manager) were added throughout to go beyond the baseline requirements, and the Terraform config was iterated against a real Checkov security scan until it reached a clean pass.
